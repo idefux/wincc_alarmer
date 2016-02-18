@@ -26,11 +26,14 @@ def poll_alarms():
     send_email = config.get_send_email()
     send_syslog = config.get_send_syslog()
 
+    alarm_priority = config.get_alarm_priority()
+
     try:
         logging.info("Starting the while loop now.")
         logging.info("You can quit with Ctrl+C or System Exit.")
         while(1):
-            query = alarm_query_builder(begin_time, end_time)
+            query = alarm_query_builder(begin_time, end_time,
+                                        priority=alarm_priority)
             logging.debug("Built query %s", query)
             wincc_instance.execute(query)
             alarms = wincc_instance.create_alarm_record()

@@ -62,8 +62,12 @@ class Config(object):
         return self.get_data('send_syslog')
 
     def get_debug_level(self):
-        """Read config and return debug leve."""
+        """Read config and return debug level."""
         return self.get_data('debug_level')
+
+    def get_alarm_priority(self):
+        """Read config and return alarm priority for alarm filter."""
+        return self.get_data('alarm_priority')
 
     def get_syslog_host(self):
         """Read config and return syslog host."""
