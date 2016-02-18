@@ -17,10 +17,11 @@ setup(
     name='wincc_alarmer',
     version=__version__,
     packages=find_packages(exclude=['docs', 'templates', 'venv', 'tests']),
-    entry_points='''
-        [console_scripts]
-        wincc_alarmer=wincc_alarmer.cli:poll
-    ''',
+    entry_points={
+                  'console_scripts': [
+                                      'wincc_alarmer = wincc_alarmer.cli:poll',
+                                      ],
+                  },
     classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
