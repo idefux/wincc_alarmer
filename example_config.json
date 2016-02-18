@@ -1,0 +1,22 @@
+{
+    "host": "127.0.0.1",
+    "database": "CC_OS_1__15_01_08_16_40_41R",
+    "time_interval": 300,
+    "send_email": 1,
+    "send_syslog": 0,
+    "debug_level": 2,
+    "syslog_host": "192.168.xx.xx",
+    "syslog_port": 514,
+    "syslog_hostname": "WinCC at xxxx",
+    "syslog_syslogtag": "AlarmControl",
+    "email_host": "smtp.gmail.com",
+    "email_port": 465,
+    "email_username": "username",
+    "email_password": "secret",
+    "email_sender": "username@gmail.com",
+    "email_receivers": [
+                        "recipient1@domain.com",
+                        "recipient2@domain.com"],
+    "email_template_path": "../templates/",
+    "email_template_name": "email.html"
+}

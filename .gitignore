@@ -1,0 +1,6 @@
+*.pyc
+*.json
+!example_config.json
+.project
+.pydevproject
+*.ico
