@@ -3,10 +3,10 @@ Load and save config.
 The config will be json.
 """
 import json
-import logging
 
 
 class Config():
+    """This class holds the global config for the wincc_alarmer."""
 
     data = None
     filename = None
@@ -17,6 +17,7 @@ class Config():
             self.load_config()
 
     def set_configfile(self, filename):
+        """Set filename (path) of config file."""
         self.filename = filename
 
     def load_config(self):
@@ -81,27 +82,39 @@ class Config():
         return self.get_data('syslog_hostname')
 
     def get_email_host(self):
+        """Read config and return hostname of email service."""
         return self.get_data('email_host')
 
     def get_email_port(self):
+        """Read config and return port number of email service."""
         return self.get_data('email_port')
 
     def get_email_username(self):
+        """Read config and return username for of email service login."""
         return self.get_data('email_username')
 
     def get_email_password(self):
+        """Read config and return password for of email service login."""
         return self.get_data('email_password')
 
     def get_email_sender(self):
+        """Read config and return sender name for email."""
         return self.get_data('email_sender')
 
     def get_email_receivers(self):
+        """Read config and return a list of email receivers."""
         return self.get_data('email_receivers')
 
+    def get_email_subject_prefix(self):
+        """Read config and return prefix for email subject."""
+        return self.get_data('email_subject_prefix')
+
     def get_email_template_path(self):
+        """Read config and return the emails template path."""
         return self.get_data('email_template_path')
 
     def get_email_template_name(self):
+        """Read config and return filename for the email template."""
         return self.get_data('email_template_name')
 
 
