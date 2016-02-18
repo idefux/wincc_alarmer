@@ -6,6 +6,7 @@ from premailer import transform
 import logging
 
 from wincc_alarmer.config import config
+from pywincc.alarm import AlarmRecord
 
 # Unicode email formatting taken from here:
 # http://wordeology.com/computer/how-to-send-good-unicode-email-with-python.html
@@ -23,8 +24,15 @@ from email.mime.text import MIMEText
 from email.header import Header
 from email import Charset
 from email.generator import Generator
+import os
 
 Charset.add_charset('utf-8', Charset.QP, Charset.QP, 'utf-8')
+
+
+class RelEnvironment(Environment):
+    """Override join_path() to enable relative template paths."""
+    def join_path(self, template, parent):
+        return os.path.join(os.path.dirname(parent), template)
 
 
 def make_email_body(alarms):
@@ -35,6 +43,8 @@ def make_email_body(alarms):
                      "state_dict": alarms.state_dict,
                      "count": alarms.get_count_grouped()}
     env = Environment(loader=FileSystemLoader(email_template_path))
+    # email_template = os.path.join(email_template_path, email_template_name)
+    print os.getcwd()
     template = env.get_template(email_template_name)
     # template = env.from_string(EMAIL_BODY_TEMPLATE)
     email_html = template.render(template_vars)
@@ -58,7 +68,9 @@ def send_alarm_email(alarms):
     # in order to get our headers properly encoded (with QP).
     # You may want to avoid this if your headers are already ASCII, just so
     # people can read the raw message without getting a headache.
-    multipart['To'] = Header(email_receivers.encode('utf-8'), 'UTF-8').encode()
+    # multipart['To'] = Header(email_receivers.encode('utf-8'), 'UTF-8').encode()
+    commaspace = ', '
+    multipart['To'] = Header(commaspace.join(email_receivers), 'UTF-8').encode()
     multipart['From'] = Header(email_sender.encode('utf-8'), 'UTF-8').encode()
 
     alarms_count = alarms.count_come()
@@ -91,3 +103,11 @@ def send_alarm_email(alarms):
         logging.info("Successfully sent email")
     except SMTPException:
         logging.warning("Unable to send email!")
+
+
+def send_test_email():
+    """Send a simple test email to check email service."""
+    # Maybe the AlarmRecord() instance can be replaced by an empty list
+    # The import would be unnecessary then
+    alarms = AlarmRecord()
+    send_alarm_email(alarms)

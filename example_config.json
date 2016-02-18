@@ -18,5 +18,6 @@
                         "recipient1@domain.com",
                         "recipient2@domain.com"],
     "email_template_path": "../templates/",
-    "email_template_name": "email.html"
+    "email_template_name": "email.html",
+    "email_subject_prefix": "Plant XY:"
 }

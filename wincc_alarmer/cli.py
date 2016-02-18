@@ -8,6 +8,7 @@ import logging
 
 from wincc_alarmer.poller import poll_alarms
 from wincc_alarmer.config import config
+from wincc_alarmer.mailer import send_test_email
 
 
 def set_debug_level():
@@ -22,15 +23,25 @@ def set_debug_level():
         logging.basicConfig(level=logging.WARNING)
 
 
+def set_config(config_file):
+    """Set global config."""
+    config.set_configfile(config_file)
+    config.load_config()
+
+
 @click.command()
 @click.argument('config_file')
 def poll(config_file):
     """Main entry point. Loads config file and calls poll function."""
-    config.set_configfile(config_file)
-    config.load_config()
+    set_config(config_file)
     set_debug_level()
     poll_alarms()
 
 
-if __name__ == '__main__':
-    poll("..\config.json")
+@click.command()
+@click.argument('config_file')
+def test_email(config_file):
+    """Simple routine for sending a test email."""
+    set_config(config_file)
+    set_debug_level()
+    send_test_email()

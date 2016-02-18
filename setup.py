@@ -20,6 +20,7 @@ setup(
     entry_points={
                   'console_scripts': [
                                       'wincc_alarmer = wincc_alarmer.cli:poll',
+                                      'test_email = wincc_alarmer.cli:test_email',
                                       ],
                   },
     classifiers=[
