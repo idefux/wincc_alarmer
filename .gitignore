@@ -4,3 +4,6 @@
 .project
 .pydevproject
 *.ico
+.settings/
+venv/
+*.egg-info/
