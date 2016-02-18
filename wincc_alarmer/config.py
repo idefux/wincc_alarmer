@@ -5,7 +5,7 @@ The config will be json.
 import json
 
 
-class Config():
+class Config(object):
     """This class holds the global config for the wincc_alarmer."""
 
     data = None
