@@ -75,8 +75,8 @@ def send_alarm_email(alarms):
 
     alarms_count = alarms.count_come()
     email_subject_prefix = config.get_email_subject_prefix()
-    email_subject = email_subject_prefix + u": "
-    email_subject += u"%s new alarms" % alarms_count
+    email_subject = email_subject_prefix
+    email_subject += u" %s new alarms" % alarms_count
     multipart['Subject'] = Header(email_subject.encode('utf-8'), 'UTF-8').encode()
     # email_text = email_header_template.format(email_sender=email_sender,
     #                                           email_receivers=email_receivers,
