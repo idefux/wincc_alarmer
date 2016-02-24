@@ -69,6 +69,10 @@ class Config(object):
         """Read config and return alarm priority for alarm filter."""
         return self.get_data('alarm_priority')
 
+    def get_alarm_priority2(self):
+        """Read config and return alarm priority for alarm filter."""
+        return self.get_data('alarm_priority2')
+
     def get_syslog_host(self):
         """Read config and return syslog host."""
         return self.get_data('syslog_host')
