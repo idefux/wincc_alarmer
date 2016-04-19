@@ -15,6 +15,7 @@ the network.
 """
 
 import socket
+import ssl
 import logging
 
 from pywincc.alarm import alarm_state_as_text
@@ -36,13 +37,10 @@ LEVEL = {
 }
 
 
-def syslog(message, level=LEVEL['notice'], facility=FACILITY['daemon'],
-           time='', hostname='', syslogtag='', host='localhost', port=514):
-    """
-    Send syslog UDP packet to given host and port.
-    """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # data = '<%d>%s %s %s' % (level + facility*8, time, hostname, message)
+def encode_syslog_message(message, level=LEVEL['warning'],
+                          facility=FACILITY['daemon'], time='', hostname='',
+                          syslogtag=''):
+    """Build and return syslog message string."""
     data = u'<%d>' % (level + facility*8)
     logging.debug(u"syslog time %s", time)
     if time:
@@ -53,18 +51,77 @@ def syslog(message, level=LEVEL['notice'], facility=FACILITY['daemon'],
         data += u' %s:' % syslogtag
     data += u'%s' % message
     logging.debug(u"syslog message: %s", data)
+    return data
+
+
+def syslog(data, host='localhost', port=514):
+    """
+    Send syslog UDP packet to given host and port.
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(data.encode('utf-8'), (host, port))
     sock.close()
 
 
-def syslog_message(alarm):
+def check_host_name(peercert, name):
+    """Simple certificate/host name checker.  Returns True if the
+    certificate matches, False otherwise.  Does not support
+    wildcards."""
+    # Check that the peer has supplied a certificate.
+    # None/{} is not acceptable.
+    if not peercert:
+        return False
+    if peercert.has_key("subjectAltName"):
+        for typ, val in peercert["subjectAltName"]:
+            if typ == "DNS" and val == name:
+                return True
+    else:
+        # Only check the subject DN if there is no subject alternative
+        # name.
+        cn = None
+        for attr, val in peercert["subject"]:
+            # Use most-specific (last) commonName attribute.
+            if attr == "commonName":
+                cn = val
+        if cn is not None:
+            return cn == name
+    return False
+
+
+def syslog_tls(data, host='localhost', port=514):
+    """
+    Send syslog UDP packet to given host and port.
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock = ssl.wrap_socket(sock,
+                           ciphers="HIGH:-aNULL:-eNULL:-PSK:RC4-SHA:RC4-MD5",
+                           ssl_version=ssl.PROTOCOL_TLSv1_2,
+                           cert_reqs=ssl.CERT_REQUIRED,
+                           ca_certs=config.get_syslog_tls_cert())
+    if not check_host_name(sock.getpeercert(), host):
+        raise IOError("peer certificate does not match host name")
+    sock.sendto(data.encode('utf-8'), (host, port))
+    sock.close()
+
+
+def syslog_message(alarm, tls=False):
     """Assemble and send a syslog message for given alarm data."""
     event_time = str_to_datetime(alarm.datetime)
     event_time_syslog = datetime_to_syslog_timestamp(event_time)
     state = alarm_state_as_text(alarm.state)
-    syslog_message = unicode(alarm.id) + u': ' + state + u' '
+    syslog_message = unicode(alarm.priority) + u': ' + state + u' '
     syslog_message += unicode(alarm.location)
-    syslog_message += ' ' + unicode(alarm.text)
-    syslog(syslog_message, hostname=config.get_syslog_hostname(),
-           syslogtag=config.get_syslog_syslogtag(), time=event_time_syslog,
-           host=config.get_syslog_host())
+    syslog_message += u' ' + unicode(alarm.text)
+    syslog_message += u' (' + unicode(alarm.id) + u')'
+    data = encode_syslog_message(message=syslog_message,
+                                 hostname=config.get_syslog_hostname(),
+                                 syslogtag=config.get_syslog_syslogtag(),
+                                 time=event_time_syslog)
+    # syslog(syslog_message, hostname=config.get_syslog_hostname(),
+    #        syslogtag=config.get_syslog_syslogtag(), time=event_time_syslog,
+    #        host=config.get_syslog_host())
+    if tls:
+        syslog_tls(data, host=config.get_syslog_host(),
+                   port=config.get_syslog_tls_port())
+    else:
+        syslog(data, host=config.get_syslog_host())

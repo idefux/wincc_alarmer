@@ -9,6 +9,8 @@
     "alarm_priority2": "",
     "syslog_host": "192.168.xx.xx",
     "syslog_port": 514,
+    "syslog_tls_port": 514,
+    "syslog_tls_cert": "My-Syslog-Server.crt",
     "syslog_hostname": "WinCC at xxxx",
     "syslog_syslogtag": "AlarmControl",
     "email_host": "smtp.gmail.com",

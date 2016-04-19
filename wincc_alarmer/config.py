@@ -81,6 +81,14 @@ class Config(object):
         """Read config and return syslog port."""
         return self.get_data('syslog_port')
 
+    def get_syslog_tls_port(self):
+        """Read config and return syslog tls port."""
+        return self.get_data('syslog_tls_port')
+
+    def get_syslog_tls_cert(self):
+        """Read config and return syslog tls certificate."""
+        return self.get_data('syslog_tls_cert')
+
     def get_syslog_hostname(self):
         """Read config and return hostname (syslog field)."""
         return self.get_data('syslog_hostname')
