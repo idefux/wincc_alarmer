@@ -104,7 +104,7 @@ def syslog_tls(data, host='localhost', port=514):
     sock.close()
 
 
-def syslog_message(alarm, tls=False):
+def syslog_message(alarm):
     """Assemble and send a syslog message for given alarm data."""
     event_time = str_to_datetime(alarm.datetime)
     event_time_syslog = datetime_to_syslog_timestamp(event_time)
@@ -120,6 +120,7 @@ def syslog_message(alarm, tls=False):
     # syslog(syslog_message, hostname=config.get_syslog_hostname(),
     #        syslogtag=config.get_syslog_syslogtag(), time=event_time_syslog,
     #        host=config.get_syslog_host())
+    tls = config.get_syslog_use_tls()
     if tls:
         syslog_tls(data, host=config.get_syslog_host(),
                    port=config.get_syslog_tls_port())
