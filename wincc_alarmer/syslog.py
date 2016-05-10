@@ -117,11 +117,11 @@ def syslog_message(alarm):
     event_time = str_to_datetime(alarm.datetime)
     event_time_syslog = datetime_to_syslog_timestamp(event_time)
     state = alarm_state_as_text(alarm.state)
-    syslog_message = unicode(alarm.priority) + u': ' + state + u' '
-    syslog_message += unicode(alarm.location)
-    syslog_message += u' ' + unicode(alarm.text)
-    syslog_message += u' (' + unicode(alarm.id) + u')'
-    data = encode_syslog_message(message=syslog_message,
+    message = unicode(alarm.priority) + u': ' + state + u' '
+    message += unicode(alarm.location)
+    message += u' ' + unicode(alarm.text)
+    message += u' (' + unicode(alarm.id) + u')'
+    data = encode_syslog_message(message=message,
                                  hostname=config.get_syslog_hostname(),
                                  syslogtag=config.get_syslog_syslogtag(),
                                  time=event_time_syslog)

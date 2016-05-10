@@ -137,5 +137,21 @@ class Config(object):
         """Read config and return filename for the email template."""
         return self.get_data('email_template_name')
 
+    def get_syslog_priorities(self):
+        """Read config and return a list of priorities to pass filter."""
+        return self.get_data('syslog_priorities')
+
+    def get_syslog_states(self):
+        """Read config and return a list of states to pass filter."""
+        return self.get_data('syslog_states')
+
+    def get_email_priorities(self):
+        """Read config and return a list of priorities to pass filter."""
+        return self.get_data('email_priorities')
+
+    def get_email_states(self):
+        """Read config and return a list of states to pass filter."""
+        return self.get_data('email_states')
+
 
 config = Config()

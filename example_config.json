@@ -24,5 +24,9 @@
                         "recipient2@domain.com"],
     "email_template_path": "./templates/",
     "email_template_name": "email.html",
-    "email_subject_prefix": "Plant XY:"
+    "email_subject_prefix": "Plant XY:",
+    "syslog_priorities": ["WARNING", "ERROR_DAY", "ERROR_NOW", "STOP_ALL"],
+    "syslog_states": ["COME", "GO", "ACK", "GACK"],
+    "email_priorities": ["ERROR_NOW", "STOP_ALL"],
+    "email_states": ["COME", "GO", "ACK", "GACK"]
 }
