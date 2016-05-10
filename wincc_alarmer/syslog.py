@@ -79,7 +79,8 @@ def check_host_name(peercert, name):
         # Only check the subject DN if there is no subject alternative
         # name.
         cn = None
-        for attr, val in peercert["subject"]:
+        for item in peercert["subject"]:
+            attr, val = item[0][0]
             # Use most-specific (last) commonName attribute.
             if attr == "commonName":
                 cn = val
@@ -92,15 +93,22 @@ def syslog_tls(data, host='localhost', port=514):
     """
     Send syslog UDP packet to given host and port.
     """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock = ssl.wrap_socket(sock,
                            ciphers="HIGH:-aNULL:-eNULL:-PSK:RC4-SHA:RC4-MD5",
                            ssl_version=ssl.PROTOCOL_TLSv1_2,
                            cert_reqs=ssl.CERT_REQUIRED,
                            ca_certs=config.get_syslog_tls_cert())
+    sock.connect((host, port))
     if not check_host_name(sock.getpeercert(), host):
         raise IOError("peer certificate does not match host name")
-    sock.sendto(data.encode('utf-8'), (host, port))
+    totalsent = 0
+    while totalsent < len(data):
+        sent = sock.send(data[totalsent:])
+        if sent == 0:
+            raise RuntimeError("socket connection broken")
+        totalsent = totalsent + sent
+    sock.shutdown(socket.SHUT_RDWR)
     sock.close()
 
 
