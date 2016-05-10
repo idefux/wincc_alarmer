@@ -33,35 +33,38 @@ def poll_alarms():
         logging.info("Starting the while loop now.")
         logging.info("You can quit with Ctrl+C or System Exit.")
         while(1):
-            query = alarm_query_builder(begin_time, end_time,
-                                        priority=alarm_priority,
-                                        priority2=alarm_priority2)
-            logging.debug("Built query %s", query)
-            wincc_instance.execute(query)
-            alarms = wincc_instance.create_alarm_record()
-            logging.debug(alarms)
-            alarms_count = alarms.count_come()
-            logging.debug(alarms_count)
-            if alarms_count:
-                logging.info("Found %s new alarms" % alarms_count)
-                if send_email:
-                    logging.info("Trying to send alarms email.")
-                    send_alarm_email(alarms)
-                if send_syslog:
-                    logging.info("Trying to send alarms as syslog.")
-                    for alarm in alarms:
-                        logging.debug(alarm)
-                        syslog_message(alarm)
+            try:
+                query = alarm_query_builder(begin_time, end_time,
+                                            priority=alarm_priority,
+                                            priority2=alarm_priority2)
+                logging.debug("Built query %s", query)
+                wincc_instance.execute(query)
+                alarms = wincc_instance.create_alarm_record()
+                logging.debug(alarms)
+                alarms_count = alarms.count_come()
+                logging.debug(alarms_count)
+                if alarms_count:
+                    logging.info("Found %s new alarms", alarms_count)
+                    if send_email:
+                        logging.info("Trying to send alarms email.")
+                        send_alarm_email(alarms)
+                    if send_syslog:
+                        logging.info("Trying to send alarms as syslog.")
+                        for alarm in alarms:
+                            logging.debug(alarm)
+                            syslog_message(alarm)
+            except WinCCException as exc:
+                print(exc)
+            else:
+                begin_time = end_time
+                logging.info("New begin time %s", begin_time)
 
-            begin_time = end_time
-            logging.info("New begin time %s", begin_time)
             logging.info("Going to sleep now for %s seconds", time_intervall)
             sleep(time_intervall)
             logging.info("I'm back from sleep.")
             end_time = datetime.now()
             logging.debug("New end_time %s", end_time)
-    except WinCCException as e:
-        print(e)
+
     except (KeyboardInterrupt, SystemExit):
         logging.info("Quitting on user request.")
     finally:
