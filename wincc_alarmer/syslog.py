@@ -49,7 +49,7 @@ def encode_syslog_message(message, level=LEVEL['warning'],
         data += u' %s' % hostname
     if syslogtag:
         data += u' %s:' % syslogtag
-    data += u'%s' % message
+    data += u' %s' % message
     logging.debug(u"syslog message: %s", data)
     return data
 
@@ -95,12 +95,14 @@ def syslog_tls(data, host='localhost', port=514):
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock = ssl.wrap_socket(sock,
+                           certfile="xxx.crt",
+                           keyfile="xxx.key",
                            ciphers="HIGH:-aNULL:-eNULL:-PSK:RC4-SHA:RC4-MD5",
                            ssl_version=ssl.PROTOCOL_TLSv1_2,
                            cert_reqs=ssl.CERT_REQUIRED,
                            ca_certs=config.get_syslog_tls_cert())
     sock.connect((host, port))
-    if not check_host_name(sock.getpeercert(), host):
+    if not check_host_name(sock.getpeercert(), "xxx"):
         raise IOError("peer certificate does not match host name")
     totalsent = 0
     while totalsent < len(data):
