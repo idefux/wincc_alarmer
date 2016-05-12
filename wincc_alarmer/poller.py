@@ -55,7 +55,7 @@ def poll_alarms():
                 alarms_syslog = AlarmRecord(alarms.filter_by_priorities(syslog_priorities))
                 alarms_syslog = AlarmRecord(alarms_syslog.filter_by_states(syslog_states))
 
-                if send_email and alarms_email:
+                if send_email and alarms_email.count_come():
                     logging.info("Trying to send alarms email.")
                     send_alarm_email(alarms_email)
 
