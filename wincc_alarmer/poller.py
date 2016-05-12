@@ -50,10 +50,10 @@ def poll_alarms():
                 logging.info("Found %s new alarms", alarms_count)
 
                 alarms_email = AlarmRecord(alarms.filter_by_priorities(email_priorities))
-                alarms_email = alarms_email.filter_by_states(email_states)
+                alarms_email = AlarmRecord(alarms_email.filter_by_states(email_states))
 
                 alarms_syslog = AlarmRecord(alarms.filter_by_priorities(syslog_priorities))
-                alarms_syslog = alarms_syslog.filter_by_states(syslog_states)
+                alarms_syslog = AlarmRecord(alarms_syslog.filter_by_states(syslog_states))
 
                 if send_email and alarms_email:
                     logging.info("Trying to send alarms email.")
