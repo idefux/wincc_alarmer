@@ -59,7 +59,7 @@ def poll_alarms():
                     logging.info("Trying to send alarms email.")
                     send_alarm_email(alarms_email)
 
-                if send_syslog and alarms_syslog:
+                if send_syslog and alarms_syslog.count_all():
                     logging.info("Trying to send alarms as syslog.")
                     for alarm in alarms_syslog:
                         logging.debug(alarm)
