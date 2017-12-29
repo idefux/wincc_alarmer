@@ -12,6 +12,7 @@ from pywincc.alarm import alarm_query_builder, AlarmRecord
 from wincc_alarmer.mailer import send_alarm_email
 from wincc_alarmer.syslog import syslog_message
 from wincc_alarmer.config import config
+import wincc_alarmer.slack as slack
 
 
 def poll_alarms():
@@ -25,16 +26,20 @@ def poll_alarms():
     wincc_instance.connect()
 
     send_email = config.get_send_email()
+    if send_email:
+        email_priorities = config.get_email_priorities()
+        email_states = config.get_email_states()
+
     send_syslog = config.get_send_syslog()
+    if send_syslog:
+        syslog_priorities = config.get_syslog_priorities()
+        syslog_states = config.get_syslog_states()
 
-    alarm_priority = config.get_alarm_priority()
-    alarm_priority2 = config.get_alarm_priority2()
-
-    email_priorities = config.get_email_priorities()
-    email_states = config.get_email_states()
-
-    syslog_priorities = config.get_syslog_priorities()
-    syslog_states = config.get_syslog_states()
+    send_slack = config.get_send_slack()
+    if send_slack:
+        slack_priorities = config.get_slack_priorities()
+        slack_states = config.get_slack_states()
+        slack.read_config()
 
     try:
         logging.info("Starting the while loop now.")
@@ -49,21 +54,28 @@ def poll_alarms():
                 alarms_count = alarms.count_come()
                 logging.info("Found %s new alarms", alarms_count)
 
-                alarms_email = AlarmRecord(alarms.filter_by_priorities(email_priorities))
-                alarms_email = AlarmRecord(alarms_email.filter_by_states(email_states))
+                if send_email:
+                    alarms_email = AlarmRecord(alarms.filter_by_priorities(email_priorities))
+                    alarms_email = AlarmRecord(alarms_email.filter_by_states(email_states))
+                    if alarms_email.count_come():
+                        logging.info("Trying to send alarms email.")
+                        send_alarm_email(alarms_email)
 
-                alarms_syslog = AlarmRecord(alarms.filter_by_priorities(syslog_priorities))
-                alarms_syslog = AlarmRecord(alarms_syslog.filter_by_states(syslog_states))
+                if send_syslog:
+                    alarms_syslog = AlarmRecord(alarms.filter_by_priorities(syslog_priorities))
+                    alarms_syslog = AlarmRecord(alarms_syslog.filter_by_states(syslog_states))
+                    if alarms_syslog.count_all():
+                        logging.info("Trying to send alarms as syslog.")
+                        for alarm in alarms_syslog:
+                            logging.debug(alarm)
+                            syslog_message(alarm)
 
-                if send_email and alarms_email.count_come():
-                    logging.info("Trying to send alarms email.")
-                    send_alarm_email(alarms_email)
-
-                if send_syslog and alarms_syslog.count_all():
-                    logging.info("Trying to send alarms as syslog.")
-                    for alarm in alarms_syslog:
-                        logging.debug(alarm)
-                        syslog_message(alarm)
+                if send_slack:
+                    alarms_slack = AlarmRecord(alarms.filter_by_priorities(slack_priorities))
+                    alarms_slack = AlarmRecord(alarms_slack.filter_by_states(slack_states))
+                    if alarms_slack.count_come():
+                        logging.info("Trying to send slack.")
+                        slack.send_alarm_slack(alarms_slack)
 
             except WinCCException as exc:
                 print(exc)

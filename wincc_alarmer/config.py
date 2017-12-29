@@ -65,14 +65,6 @@ class Config(object):
         """Read config and return debug level."""
         return self.get_data('debug_level')
 
-    def get_alarm_priority(self):
-        """Read config and return alarm priority for alarm filter."""
-        return self.get_data('alarm_priority')
-
-    def get_alarm_priority2(self):
-        """Read config and return alarm priority for alarm filter."""
-        return self.get_data('alarm_priority2')
-
     def get_syslog_host(self):
         """Read config and return syslog host."""
         return self.get_data('syslog_host')
@@ -153,5 +145,20 @@ class Config(object):
         """Read config and return a list of states to pass filter."""
         return self.get_data('email_states')
 
+    def get_send_slack(self):
+        """Read config and return send slack flag."""
+        return self.get_data('send_slack')
+
+    def get_slack_webhook_url(self):
+        """Read config and return the url for the slack webhook."""
+        return self.get_data('slack_webhook_url')
+
+    def get_slack_priorities(self):
+        """Read config and return a list of priorities to pass filter."""
+        return self.get_data('slack_priorities')
+
+    def get_slack_states(self):
+        """Read config and return a list of states to pass filter."""
+        return self.get_data('slack_states')
 
 config = Config()

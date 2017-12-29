@@ -4,9 +4,8 @@
     "time_interval": 300,
     "send_email": 1,
     "send_syslog": 0,
+    "send_slack": 1,
     "debug_level": 2,
-    "alarm_priority": "",
-    "alarm_priority2": "",
     "syslog_host": "192.168.xx.xx",
     "syslog_port": 514,
     "syslog_use_tls": 1,
@@ -28,5 +27,8 @@
     "syslog_priorities": ["WARNING", "ERROR_DAY", "ERROR_NOW", "STOP_ALL"],
     "syslog_states": ["COME", "GO", "ACK", "GACK"],
     "email_priorities": ["ERROR_NOW", "STOP_ALL"],
-    "email_states": ["COME", "GO", "ACK", "GACK"]
+    "email_states": ["COME", "GO", "ACK", "GACK"],
+    "slack_webhook_url": "https://hooks.slack.com/services/xxxx/xxxx",
+    "slack_priorities": ["WARNING", "ERROR_DAY", "ERROR_NOW", "STOP_ALL"],
+    "slack_states": ["COME"]
 }
