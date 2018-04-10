@@ -5,6 +5,7 @@
     "send_email": 1,
     "send_syslog": 0,
     "send_slack": 1,
+    "send_zulip": 0,
     "debug_level": 2,
     "syslog_host": "192.168.xx.xx",
     "syslog_port": 514,
@@ -30,5 +31,10 @@
     "email_states": ["COME", "GO", "ACK", "GACK"],
     "slack_webhook_url": "https://hooks.slack.com/services/xxxx/xxxx",
     "slack_priorities": ["WARNING", "ERROR_DAY", "ERROR_NOW", "STOP_ALL"],
-    "slack_states": ["COME"]
+    "slack_states": ["COME"],
+    "zulip_base_url": "https://zulip.xxx.com/api/v1/external/wincc",
+    "zulip_stream": "alarms",
+    "zulip_api_key": "xxxx",
+    "zulip_priorities": ["WARNING", "ERROR_DAY", "ERROR_NOW", "STOP_ALL"],
+    "zulip_states": ["COME"]
 }

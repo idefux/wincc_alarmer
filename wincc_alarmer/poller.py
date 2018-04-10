@@ -13,6 +13,7 @@ from wincc_alarmer.mailer import send_alarm_email
 from wincc_alarmer.syslog import syslog_message
 from wincc_alarmer.config import config
 import wincc_alarmer.slack as slack
+import wincc_alarmer.zulip as zulip
 
 
 def poll_alarms():
@@ -40,6 +41,12 @@ def poll_alarms():
         slack_priorities = config.get_slack_priorities()
         slack_states = config.get_slack_states()
         slack.read_config()
+
+    send_zulip = config.get_send_zulip()
+    if send_zulip:
+        zulip_priorities = config.get_zulip_priorities()
+        zulip_states = config.get_zulip_states()
+        zulip.read_config()
 
     try:
         logging.info("Starting the while loop now.")
@@ -76,6 +83,13 @@ def poll_alarms():
                     if alarms_slack.count_come():
                         logging.info("Trying to send slack.")
                         slack.send_alarm_slack(alarms_slack)
+
+                if send_zulip:
+                    alarms_zulip = AlarmRecord(alarms.filter_by_priorities(zulip_priorities))
+                    alarms_zulip = AlarmRecord(alarms_zulip.filter_by_states(zulip_states))
+                    if alarms_zulip.count_come():
+                        logging.info("Trying to send zulip.")
+                        zulip.send_alarm_zulip(alarms_zulip)
 
             except WinCCException as exc:
                 print(exc)

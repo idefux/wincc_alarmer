@@ -161,4 +161,28 @@ class Config(object):
         """Read config and return a list of states to pass filter."""
         return self.get_data('slack_states')
 
+    def get_send_zulip(self):
+        """Read config and return send zulip flag."""
+        return self.get_data('send_zulip')
+
+    def get_zulip_base_url(self):
+        """Read config and return the url for the zulip webhook base url."""
+        return self.get_data('zulip_base_url')
+
+    def get_zulip_stream(self):
+        """Read config and return zulip strem."""
+        return self.get_data('zulip_stream')
+
+    def get_zulip_api_key(self):
+        """Read config and return zulip api key"""
+        return self.get_data('zulip_api_key')
+
+    def get_zulip_priorities(self):
+        """Read config and return a list of priorities to pass filter."""
+        return self.get_data('zulip_priorities')
+
+    def get_zulip_states(self):
+        """Read config and return a list of states to pass filter."""
+        return self.get_data('zulip_states')
+
 config = Config()
