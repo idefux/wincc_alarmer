@@ -173,6 +173,10 @@ class Config(object):
         """Read config and return zulip strem."""
         return self.get_data('zulip_stream')
 
+    def get_zulip_topic(self):
+        """Read config and return zulip topic."""
+        return self.get_data('zulip_topic')
+
     def get_zulip_api_key(self):
         """Read config and return zulip api key"""
         return self.get_data('zulip_api_key')

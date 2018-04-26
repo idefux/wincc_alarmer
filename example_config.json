@@ -34,6 +34,7 @@
     "slack_states": ["COME"],
     "zulip_base_url": "https://zulip.xxx.com/api/v1/external/wincc",
     "zulip_stream": "alarms",
+    "zulip_topic": "plantXYZ",
     "zulip_api_key": "xxxx",
     "zulip_priorities": ["WARNING", "ERROR_DAY", "ERROR_NOW", "STOP_ALL"],
     "zulip_states": ["COME"]
